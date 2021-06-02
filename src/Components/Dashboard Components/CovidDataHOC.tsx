@@ -10,7 +10,7 @@ import { NewCountryData } from "../../DataInterfaces/novelGetAllCountries";
 import { GlobalTimelineInterface } from "../../DataInterfaces/globalTimelineInterface";
 
 interface COVIDDataProps {
-  startingCountry: string;
+  startingCountry: any;
 }
 
 interface COVIDDataState {
@@ -212,6 +212,7 @@ function getAllData(query) {
   ]);
 }
 
+// @ts-ignore
 export default function useCovidData(props: COVIDDataProps): UseCovidDataReturns  {
   const { refetch, isLoading, error, data } = useQuery(
     [
@@ -229,10 +230,10 @@ export default function useCovidData(props: COVIDDataProps): UseCovidDataReturns
   });
 
   const [startingCountry, setStartingCountry] = useState<string>(
-    props.startingCountry
+    "Pakistan"
   );
 
-  useEffect(() => {
+  useEffect(() => {     
       if(data && data[0] && data[1]) {
         const allCountries: AllCountriesDataInterface = { data: data[0]}
 
@@ -257,6 +258,12 @@ export default function useCovidData(props: COVIDDataProps): UseCovidDataReturns
       }
 
   }, [data]);
+
+  useEffect(() => {
+    props.startingCountry().then((res) => {
+      setStartingCountry(res);        
+    })
+  }, [])
 
   const changeCountry = (event) => {
     const { value: currentCountry} = event.target

@@ -6,6 +6,23 @@ import {Switch, Route} from 'react-router-dom'
 import About from "./About";
 import useCovidData from "./Dashboard Components/CovidDataHOC";
 
+function getCountry() {  
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        try {
+          const {latitude, longitude } = position.coords;
+          fetch(`http://api.geonames.org/countryCodeJSON?lat=${latitude}&lng=${longitude}&username=troglis`).then((res) => res.json()).then((res) => {
+            resolve(res.countryName);
+          })
+        } catch(err) {
+          resolve("Pakistan");
+        }        
+      }); 
+    })
+     
+}
+
+
 function RenderMain() {
   const {
       allCountriesData,
@@ -18,7 +35,7 @@ function RenderMain() {
 
 
   } = useCovidData({
-    startingCountry: 'Greece'
+    startingCountry: getCountry
   })
   if (!error) {
     return (
